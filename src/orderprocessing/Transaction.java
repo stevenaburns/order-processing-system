@@ -7,8 +7,11 @@ package orderprocessing;
 
 /**
  *
- * @author sab5964
+ * @author sab5964 and tjf5285
  */
-public class Transaction {
-    
+public class Transaction 
+{
+    private int amount; //use cents so we don't have to deal with decimal points
+    private String userId;
+    private String itemId;
 }
