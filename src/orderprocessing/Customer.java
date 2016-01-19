@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package orderprocessing;
 
 /**
@@ -18,6 +13,19 @@ public class Customer
     private String state;
     private String city;
 
+    /**
+     * Constructor
+     */
+    public void Customer(String firstName, String lastName, String address, String ZIP, String state, String city)
+    {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.ZIP = ZIP;
+        this.state = state;
+        this.city = city;
+    }
+    
     /**
      * @return the firstName
      */
