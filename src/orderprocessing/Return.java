@@ -6,5 +6,9 @@ package orderprocessing;
  */
 public class Return extends Transaction
 {
+
+    public Return(int amount, int userId, int itemId) {
+        super(userId, itemId);
+    }
     
 }

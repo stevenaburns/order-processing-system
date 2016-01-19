@@ -12,12 +12,14 @@ public class Customer
     private String ZIP;
     private String state;
     private String city;
+    private int customerId;
 
     /**
      * Constructor
      */
-    public void Customer(String firstName, String lastName, String address, String ZIP, String state, String city)
+    public Customer(int customerId, String firstName, String lastName, String address, String ZIP, String state, String city)
     {
+        this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -108,5 +110,12 @@ public class Customer
      */
     public void setCity(String city) {
         this.city = city;
+    }
+
+    /**
+     * @return the customerId
+     */
+    public int getCustomerId() {
+        return customerId;
     }
 }

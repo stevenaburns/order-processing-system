@@ -6,49 +6,40 @@ package orderprocessing;
  */
 public class Transaction 
 {
-    private int amount; //use cents so we don't have to deal with decimal points
-    private String userId;
-    private String itemId;
+    private int userId;
+    private int itemId;
 
-    /**
-     * @return the amount
-     */
-    public int getAmount() {
-        return amount;
-    }
-
-    /**
-     * @param amount the amount to set
-     */
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public Transaction(int userId, int itemId)
+    {
+        this.userId = userId;
+        this.itemId = itemId;
     }
 
     /**
      * @return the userId
      */
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
     /**
      * @param userId the userId to set
      */
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
     /**
      * @return the itemId
      */
-    public String getItemId() {
+    public int getItemId() {
         return itemId;
     }
 
     /**
      * @param itemId the itemId to set
      */
-    public void setItemId(String itemId) {
+    public void setItemId(int itemId) {
         this.itemId = itemId;
     }
 }
