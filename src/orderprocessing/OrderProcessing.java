@@ -23,6 +23,7 @@ public class OrderProcessing {
             Random rand2 = new Random();
             Random rand3 = new Random();
             
+            
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
             int quantity = rand3.nextInt(5);
