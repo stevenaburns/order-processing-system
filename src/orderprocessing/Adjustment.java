@@ -10,5 +10,8 @@ public class Adjustment extends Transaction
     public Adjustment(int amount, int userId, int itemId) {
         super(userId, itemId);
     }
+
+    @Override
+    int getQuantity(){return 0;};
     
 }

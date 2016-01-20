@@ -4,7 +4,7 @@ package orderprocessing;
  *
  * @author sab5964 and tjf5285
  */
-public class Transaction 
+public abstract class Transaction 
 {
     private int userId;
     private int itemId;
@@ -14,7 +14,9 @@ public class Transaction
         this.userId = userId;
         this.itemId = itemId;
     }
-
+    
+    abstract int getQuantity();
+    
     /**
      * @return the userId
      */

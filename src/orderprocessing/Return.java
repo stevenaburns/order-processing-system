@@ -11,4 +11,6 @@ public class Return extends Transaction
         super(userId, itemId);
     }
     
+    int getQuantity(){return 0;};
+    
 }

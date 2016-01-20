@@ -2,7 +2,6 @@ package orderprocessing;
 
 import java.util.ArrayList;
 import java.util.Random;
-import orderprocessing.InventoryItem;
 
 /**
  *
@@ -27,23 +26,28 @@ public class OrderProcessing {
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
             int quantity = rand3.nextInt(5);
-            tc.setCustomer(customers.get(customer));
             
-            tc.setOrder(new Order(customer, item, quantity));
-            performTransaction(tc);
+            tc.setCustomer(customers.get(customer));
+            tc.setTransaction(new Order(customer, item, quantity));
+            
+            System.out.println("User ID: " + tc.getTransaction().getUserId());
+            System.out.println("User ID: " + tc.getTransaction().getItemId());
+            System.out.println("User ID: " + tc.getTransaction().getQuantity());
+            
+            performOrder(tc);
         }
         
         tc.displayTotals();
        
     }
     
-    public static void performTransaction(TransactionController tc)
+    public static void performOrder(TransactionController tc)
     {
         System.out.println("Inventory Before Sale:");
         tc.displayInventory();
         if(tc.checkAvailibility() == true)
         {
-           tc.performTransaction();
+           tc.performOrder();
            tc.displayTransactionDetails();
            System.out.println("\nInventory After Sale:");
            tc.displayInventory();
@@ -89,7 +93,7 @@ public class OrderProcessing {
         Customer c =    new Customer(0,     "Tim",      "Flynn",    "101 Easy St.", "16802", "PA", "University Park");
         Customer c1 =   new Customer(1,     "Jerry",    "Williams", "102 Easy St.", "16802", "PA", "University Park");
         Customer c2 =   new Customer(2,     "John",     "Smith",    "103 Easy St.", "16802", "PA", "University Park");
-        Customer c3 =   new Customer(2,     "Adam",     "Jones",    "104 Easy St.", "16802", "PA", "University Park");
+        Customer c3 =   new Customer(3,     "Adam",     "Jones",    "104 Easy St.", "16802", "PA", "University Park");
         
         customerList.add(c);
         customerList.add(c1);

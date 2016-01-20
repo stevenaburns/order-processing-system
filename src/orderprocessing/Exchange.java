@@ -11,4 +11,6 @@ public class Exchange extends Transaction
         super(userId, itemId);
     }
     
+    int getQuantity(){return 0;};
+    
 }

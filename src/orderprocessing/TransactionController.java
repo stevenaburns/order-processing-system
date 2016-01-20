@@ -10,7 +10,7 @@ public class TransactionController
 {
     private ArrayList<InventoryItem> inventory;
     private Customer customer;
-    private Order order;
+    private Transaction transaction;
     private int totalSalesUnits;
     private int totalSales;
     
@@ -21,11 +21,11 @@ public class TransactionController
     
     public boolean checkAvailibility()
     {
-        InventoryItem ii = getInventory().get(getOrder().getItemId());
+        InventoryItem ii = getInventory().get(getTransaction().getItemId());
 
-        if(ii.getQuantity() - getOrder().getQuantity() < 0)
+        if(ii.getQuantity() - getTransaction().getQuantity() < 0)
         {
-            System.out.println("\nOnly " + ii.getQuantity() + " units of " + ii.getName() + " available, order requested " + getOrder().getQuantity());
+            System.out.println("\nOnly " + ii.getQuantity() + " units of " + ii.getName() + " available, order requested " + getTransaction().getQuantity());
             return false;
         }
         else
@@ -34,11 +34,11 @@ public class TransactionController
         }
     }
     
-    public void performTransaction()
+    public void performOrder()
     {
-        InventoryItem ii = getInventory().get(getOrder().getItemId());
-        ii.setQuantity((ii.getQuantity()-getOrder().getQuantity()));
-        int quantity = getOrder().getQuantity();
+        InventoryItem ii = getInventory().get(getTransaction().getItemId());
+        ii.setQuantity((ii.getQuantity()-getTransaction().getQuantity()));
+        int quantity = getTransaction().getQuantity();
         int price = ii.getPrice()*quantity;
         totalSales += price;
         totalSalesUnits += quantity;
@@ -46,8 +46,8 @@ public class TransactionController
     
     public void displayTransactionDetails()
     {
-        InventoryItem ii = getInventory().get(getOrder().getItemId());
-        System.out.println("\n" + getOrder().getQuantity() + " unit(s) of " + ii.getName() + " was sold to " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " for " + (double)ii.getPrice()/100*getOrder().getQuantity());
+        InventoryItem ii = getInventory().get(getTransaction().getItemId());
+        System.out.println("\n" + getTransaction().getQuantity() + " unit(s) of " + ii.getName() + " was sold to " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " for " + (double)ii.getPrice()/100*getTransaction().getQuantity());
     }
     
     public void displayInventory()
@@ -98,15 +98,15 @@ public class TransactionController
     /**
      * @return the order
      */
-    public Order getOrder() {
-        return order;
+    public Transaction getTransaction() {
+        return transaction;
     }
 
     /**
      * @param order the order to set
      */
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
     }
 
     /**
