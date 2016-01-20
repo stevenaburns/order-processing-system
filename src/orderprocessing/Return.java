@@ -6,11 +6,18 @@ package orderprocessing;
  */
 public class Return extends Transaction
 {
-
-    public Return(int amount, int userId, int itemId) {
+    private int quantity;
+    
+    public Return(int quantity, int userId, int itemId) {
         super(userId, itemId);
+        this.quantity = quantity;
+    }
+
+    @Override
+    int getQuantity() {
+        return quantity;
     }
     
-    int getQuantity(){return 0;};
+
     
 }

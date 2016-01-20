@@ -22,11 +22,11 @@ public class OrderProcessing {
             Random rand = new Random();
             Random rand2 = new Random();
             Random rand3 = new Random();
-            
+            Random rand4 = new Random();
             
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
-            int quantity = rand3.nextInt(5);
+            int quantity = rand3.nextInt(5)+1;
             
             tc.setCustomer(customers.get(customer));
             tc.setTransaction(new Order(customer, item, quantity));
@@ -35,11 +35,17 @@ public class OrderProcessing {
             System.out.println("User ID: " + tc.getTransaction().getItemId());
             System.out.println("User ID: " + tc.getTransaction().getQuantity());
             
-            performOrder(tc);
+            if(rand4.nextInt(8) == 3)
+            {
+                performReturn(tc);
+            }
+            else
+            {
+                performOrder(tc);
+            }
         }
         
         tc.displayTotals();
-       
     }
     
     public static void performOrder(TransactionController tc)
@@ -49,7 +55,7 @@ public class OrderProcessing {
         if(tc.checkAvailibility() == true)
         {
            tc.performOrder();
-           tc.displayTransactionDetails();
+           tc.displayOrderDetails();
            System.out.println("\nInventory After Sale:");
            tc.displayInventory();
         }
@@ -57,6 +63,20 @@ public class OrderProcessing {
         {
             System.out.println("\nRequested units unavailable, order cancelled");
         } 
+        
+        System.out.println("---------------------------------------------------------------\n");
+    }
+    
+     public static void performReturn(TransactionController tc)
+    {
+        System.out.println("Inventory Before Return:");
+        tc.displayInventory();
+
+        tc.performReturn();
+        tc.displayReturnDetails();
+        System.out.println("\nInventory After Return:");
+        tc.displayInventory();
+       
         
         System.out.println("---------------------------------------------------------------\n");
     }

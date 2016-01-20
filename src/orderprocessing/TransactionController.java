@@ -44,10 +44,16 @@ public class TransactionController
         totalSalesUnits += quantity;
     }
     
-    public void displayTransactionDetails()
+    public void displayOrderDetails()
     {
         InventoryItem ii = getInventory().get(getTransaction().getItemId());
         System.out.println("\n" + getTransaction().getQuantity() + " unit(s) of " + ii.getName() + " was sold to " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " for " + (double)ii.getPrice()/100*getTransaction().getQuantity());
+    }
+    
+    public void displayReturnDetails()
+    {
+        InventoryItem ii = getInventory().get(getTransaction().getItemId());
+        System.out.println("\n" + getTransaction().getQuantity() + " unit(s) of " + ii.getName() + " was returned by " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " for " + (double)ii.getPrice()/100*getTransaction().getQuantity());
     }
     
     public void displayInventory()
@@ -135,5 +141,14 @@ public class TransactionController
      */
     public void setTotalSalesUnits(int totalSalesUnits) {
         this.totalSalesUnits = totalSalesUnits;
+    }
+
+    void performReturn() {
+        InventoryItem ii = getInventory().get(getTransaction().getItemId());
+        ii.setQuantity((ii.getQuantity()+getTransaction().getQuantity()));
+        int quantity = getTransaction().getQuantity();
+        int price = ii.getPrice()*quantity;
+        totalSales -= price;
+        totalSalesUnits -= quantity;   
     }
 }
