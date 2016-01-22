@@ -6,19 +6,19 @@ package orderprocessing;
  */
 public class InventoryItem 
 {
-    private int itemID;
+    private int SKU;
     private String name;
     private String description;
+    private int cost;
     private int price;
     private int quantity;
-
 
     /**
      * Constructor
      */
-    public InventoryItem(int itemID, String name, String description, int price, int quantity)
+    public InventoryItem(int SKU, String name, String description, int cost, int price, int quantity)
     {
-        this.itemID  = itemID;
+        this.SKU  = SKU;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -26,17 +26,17 @@ public class InventoryItem
     }
 
     /**
-     * @return the itemID
+     * @return the SKU
      */
-    public int getItemID() {
-        return itemID;
+    public int getSKU() {
+        return SKU;
     }
 
     /**
-     * @param itemID the itemID to set
+     * @param SKU the SKU to set
      */
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
+    public void setSKU(int SKU) {
+        this.SKU = SKU;
     }
 
     /**
@@ -93,6 +93,20 @@ public class InventoryItem
      */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * @return the cost
+     */
+    public int getCost() {
+        return cost;
+    }
+
+    /**
+     * @param cost the cost to set
+     */
+    public void setCost(int cost) {
+        this.cost = cost;
     }
     
 }

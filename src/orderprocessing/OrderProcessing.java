@@ -29,11 +29,12 @@ public class OrderProcessing {
             int quantity = rand3.nextInt(5)+1;
             
             tc.setCustomer(customers.get(customer));
-            tc.setTransaction(new Order(customer, item, quantity));
+            tc.setTransaction(new Order(i, customer, item, quantity));
             
-            System.out.println("User ID: " + tc.getTransaction().getUserId());
-            System.out.println("User ID: " + tc.getTransaction().getItemId());
-            System.out.println("User ID: " + tc.getTransaction().getQuantity());
+            //System.out.println("User ID: " + tc.getTransaction().getUserId());
+            //System.out.println("User ID: " + tc.getTransaction().getItemId());
+            //System.out.println("User ID: " + tc.getTransaction().getQuantity());
+            //System.out.println(tc.getTransaction().getTransactionId());
             
             if(rand4.nextInt(8) == 3)
             {
@@ -52,17 +53,11 @@ public class OrderProcessing {
     {
         System.out.println("Inventory Before Sale:");
         tc.displayInventory();
-        if(tc.checkAvailibility() == true)
-        {
-           tc.performOrder();
-           tc.displayOrderDetails();
-           System.out.println("\nInventory After Sale:");
-           tc.displayInventory();
-        }
-        else
-        {
-            System.out.println("\nRequested units unavailable, order cancelled");
-        } 
+        tc.performOrder();
+        
+        tc.displaySaleDetails();
+        System.out.println("\nInventory After Sale:");
+        tc.displayInventory();
         
         System.out.println("---------------------------------------------------------------\n");
     }
@@ -71,25 +66,23 @@ public class OrderProcessing {
     {
         System.out.println("Inventory Before Return:");
         tc.displayInventory();
-
         tc.performReturn();
         tc.displayReturnDetails();
         System.out.println("\nInventory After Return:");
         tc.displayInventory();
        
-        
         System.out.println("---------------------------------------------------------------\n");
     }
     
     public static Inventory createInventory()
     {
-        //Sample inventory                           |ID    |Name       |Description                            |Price  |Units
-        InventoryItem socks =       new InventoryItem(0,    "Socks",    "Red Harry Potter Griffindor socks",    899,    29);
-        InventoryItem shoes =       new InventoryItem(1,    "Shoes",    "Black Jordan sneakers",                7499,   20);
-        InventoryItem jeans =       new InventoryItem(2,    "Jeans",    "Blue Levi's jeans size 32",            2499,   15);
-        InventoryItem hat =         new InventoryItem(3,    "Hat",      "Black and grey wool winter hat",       1599,   16);
-        InventoryItem gloves =      new InventoryItem(4,    "Gloves",   "Blue wool winter gloves",              1299,   26);
-        InventoryItem sweatshirt =  new InventoryItem(5,    "Shirt",    "Purple cotton t-shirt",                3999,   18);
+        //Sample inventory                           |ID    |Name       |Description                            |Cost   |Price  |Units
+        InventoryItem socks =       new InventoryItem(0,    "Socks",    "Red Harry Potter Griffindor socks",    599,    899,    29);
+        InventoryItem shoes =       new InventoryItem(1,    "Shoes",    "Black Jordan sneakers",                4999,   499,   20);
+        InventoryItem jeans =       new InventoryItem(2,    "Jeans",    "Blue Levi's jeans size 32",            1399,   2499,   15);
+        InventoryItem hat =         new InventoryItem(3,    "Hat",      "Black and grey wool winter hat",       799,    1599,   16);
+        InventoryItem gloves =      new InventoryItem(4,    "Gloves",   "Blue wool winter gloves",              499,    1299,   26);
+        InventoryItem sweatshirt =  new InventoryItem(5,    "Shirt",    "Purple cotton t-shirt",                1999,   3999,   18);
         
         //Create an inventory object to store all this information
         Inventory storeInventory = new Inventory();

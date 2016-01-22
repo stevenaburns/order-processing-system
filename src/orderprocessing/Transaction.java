@@ -8,9 +8,11 @@ public abstract class Transaction
 {
     private int userId;
     private int itemId;
+    private int transactionId;
 
-    public Transaction(int userId, int itemId)
+    public Transaction(int transactionId, int userId, int itemId)
     {
+        this.transactionId = transactionId;
         this.userId = userId;
         this.itemId = itemId;
     }
@@ -43,5 +45,19 @@ public abstract class Transaction
      */
     public void setItemId(int itemId) {
         this.itemId = itemId;
+    }
+
+    /**
+     * @return the transactionId
+     */
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    /**
+     * @param transactionId the transactionId to set
+     */
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
     }
 }

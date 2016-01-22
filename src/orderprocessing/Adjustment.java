@@ -7,8 +7,8 @@ package orderprocessing;
 public class Adjustment extends Transaction
 {
 
-    public Adjustment(int amount, int userId, int itemId) {
-        super(userId, itemId);
+    public Adjustment(int transactionId, int amount, int userId, int itemId) {
+        super(transactionId, userId, itemId);
     }
 
     @Override

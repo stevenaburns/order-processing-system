@@ -8,8 +8,8 @@ public class Return extends Transaction
 {
     private int quantity;
     
-    public Return(int quantity, int userId, int itemId) {
-        super(userId, itemId);
+    public Return(int transactionId, int quantity, int userId, int itemId) {
+        super(transactionId, userId, itemId);
         this.quantity = quantity;
     }
 

@@ -8,12 +8,10 @@ public class Order extends Transaction
 {
     private int quantity;
     
-    public Order(int userId, int itemId, int quantity) {
-        super(userId, itemId);
+    public Order(int transactionId, int userId, int itemId, int quantity) {
+        super(transactionId, userId, itemId);
         this.quantity = quantity;
     }
-
-
 
     /**
      * @param quantity the quantity to set

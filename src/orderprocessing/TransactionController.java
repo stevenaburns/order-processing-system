@@ -36,15 +36,29 @@ public class TransactionController
     
     public void performOrder()
     {
+        if(checkAvailibility() == true)
+        {
+            //Sale s = new Sale(int transactionId, int userId, int SKU, int quantity, int price)
+            performSale();
+        }
+        else
+        {
+            System.out.println("Sale cancelled");
+        }
+    }
+    
+    public void performSale()
+    {
+        
         InventoryItem ii = getInventory().get(getTransaction().getItemId());
-        ii.setQuantity((ii.getQuantity()-getTransaction().getQuantity()));
+        ii.setQuantity((ii.getQuantity()-getTransaction().getQuantity())); 
         int quantity = getTransaction().getQuantity();
         int price = ii.getPrice()*quantity;
         totalSales += price;
         totalSalesUnits += quantity;
     }
     
-    public void displayOrderDetails()
+    public void displaySaleDetails()
     {
         InventoryItem ii = getInventory().get(getTransaction().getItemId());
         System.out.println("\n" + getTransaction().getQuantity() + " unit(s) of " + ii.getName() + " was sold to " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " for " + (double)ii.getPrice()/100*getTransaction().getQuantity());
@@ -62,7 +76,7 @@ public class TransactionController
         
         for(InventoryItem i: getInventory())
         {
-            System.out.println(i.getItemID() + "\t" + i.getName() + "\t" + (double)i.getPrice()/100 + "\t" + i.getQuantity() + "\t\t" + i.getDescription());
+            System.out.println(i.getSKU() + "\t" + i.getName() + "\t" + (double)i.getPrice()/100 + "\t" + i.getQuantity() + "\t\t" + i.getDescription());
         }
         
     }

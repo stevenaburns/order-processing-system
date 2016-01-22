@@ -7,8 +7,8 @@ package orderprocessing;
 public class Exchange extends Transaction
 {
 
-    public Exchange(int amount, int userId, int itemId) {
-        super(userId, itemId);
+    public Exchange(int transactionId, int amount, int userId, int itemId) {
+        super(transactionId, userId, itemId);
     }
     
     int getQuantity(){return 0;};
