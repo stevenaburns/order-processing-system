@@ -10,21 +10,14 @@ public class Inventory
 {
     private ArrayList inventory = new ArrayList();
 
-    /**
-     * @return the inventory
-     */
     public ArrayList getInventory() {
         return inventory;
     }
     
-    public void AddInventoryItem(InventoryItem i)
-    {
+    public void AddInventoryItem(InventoryItem i){
         inventory.add(i);
     }
 
-    /**
-     * @param inventory the inventory to set
-     */
     public void setInventory(ArrayList inventory) {
         this.inventory = inventory;
     }

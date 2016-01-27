@@ -13,11 +13,13 @@ public class Sale extends Transaction{
 
     private int quantity;
     private int price;
+    private int userId;
     
-    public Sale(int transactionId, int userId, int SKU, int quantity, int price) {
-        super(transactionId, userId, SKU);
+    public Sale(int transactionId, int userId, int SKU, int quantity, int price, TransactionType transactionType) {
+        super(transactionId,SKU, transactionType);
         this.quantity = quantity;
         this.price = price;
+        this.userId = userId;
     }
 
     @Override
@@ -25,25 +27,40 @@ public class Sale extends Transaction{
         return quantity;  
     }
 
-    /**
-     * @param quantity the quantity to set
-     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    /**
-     * @return the price
-     */
+    @Override
     public int getPrice() {
         return price;
     }
 
-    /**
-     * @param price the price to set
-     */
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    int getCost() {
+        return 0;
+    }
+
+    @Override
+    String getDescription() {
+        return null;
+    }
+
+    @Override
+    String getName() {
+        return null;
     }
     
 }

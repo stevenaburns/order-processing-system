@@ -4,60 +4,41 @@ package orderprocessing;
  *
  * @author sab5964 and tjf5285
  */
-public abstract class Transaction 
-{
-    private int userId;
-    private int itemId;
+public abstract class Transaction{
+    private int SKU;
     private int transactionId;
+    private TransactionType transactionType;
 
-    public Transaction(int transactionId, int userId, int itemId)
+    public Transaction(int transactionId, int SKU, TransactionType transactionType)
     {
         this.transactionId = transactionId;
-        this.userId = userId;
-        this.itemId = itemId;
+        this.SKU = SKU;
+        this.transactionType = transactionType;
     }
     
     abstract int getQuantity();
+    abstract int getCost();
+    abstract int getPrice();
+    abstract String getDescription();
+    abstract String getName();
     
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
+    public int getSKU(){
+        return SKU;
     }
 
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * @return the itemId
-     */
-    public int getItemId() {
-        return itemId;
-    }
-
-    /**
-     * @param itemId the itemId to set
-     */
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    /**
-     * @return the transactionId
-     */
-    public int getTransactionId() {
+    public int getTransactionId(){
         return transactionId;
     }
 
-    /**
-     * @param transactionId the transactionId to set
-     */
-    public void setTransactionId(int transactionId) {
+    public void setTransactionId(int transactionId){
         this.transactionId = transactionId;
+    }
+
+    public TransactionType getTransactionType(){
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType){
+        this.transactionType = transactionType;
     }
 }
