@@ -9,8 +9,7 @@ public abstract class Transaction{
     private int transactionId;
     private TransactionType transactionType;
 
-    public Transaction(int transactionId, int SKU, TransactionType transactionType)
-    {
+    public Transaction(int transactionId, int SKU, TransactionType transactionType){
         this.transactionId = transactionId;
         this.SKU = SKU;
         this.transactionType = transactionType;
@@ -21,6 +20,8 @@ public abstract class Transaction{
     abstract int getPrice();
     abstract String getDescription();
     abstract String getName();
+    abstract int getExchangeSKU();
+    abstract int getExchangeAmount();
     
     public int getSKU(){
         return SKU;

@@ -62,5 +62,15 @@ public class Sale extends Transaction{
     String getName() {
         return null;
     }
+
+    @Override
+    int getExchangeSKU() {
+        return 0;
+    }
+
+    @Override
+    int getExchangeAmount() {
+        return 0;
+    }
     
 }

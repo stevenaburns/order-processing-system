@@ -9,8 +9,9 @@ import java.util.ArrayList;
 public class TransactionController{
     private ArrayList<InventoryItem> inventory;
     private Customer customer;
-    private Transaction transaction;
     private int totalSalesUnits;
+    private int totalReturnUnits;
+    private int totalReturns;
     private int totalSales;
     
     public TransactionController(Inventory inventory){
@@ -25,21 +26,26 @@ public class TransactionController{
         if(checkAvailability(t)){
             switch(type){
                 case ORDER:
-                    ii.setQuantity(ii.getQuantity() - t.getQuantity());
-                    System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + (double)t.getPrice()*t.getQuantity()/100);
+                    performOrder(t, ii);
                     break;
                 case RETURN:
-                    ii.setQuantity(ii.getQuantity() + t.getQuantity());
-                    System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + (double)t.getPrice()*t.getQuantity()/100);
+                    performReturn(t, ii);
                     break;
                 case ADJUSTMENT:
-                    ii.setCost(t.getCost());
-                    ii.setDescription(t.getDescription());
-                    ii.setName(t.getName());
-                    ii.setPrice(t.getPrice());
-                    ii.setQuantity(t.getQuantity());
-                    System.out.println("\nAn adjustment was made to " + ii.getName());
+                    performAdjustment(t, ii);
                     break;
+                case EXCHANGE:
+                    performExchange(t, ii);
+                    break;
+            }
+        }
+        else{
+            System.out.println("\nInsufficient inventory to complete " + t.getTransactionType());
+            if(t.getTransactionType() == TransactionType.EXCHANGE){
+                System.out.println("Exchange for " + t.getExchangeAmount() + " items of " + inventory.get(t.getExchangeSKU()).getName() + " failed, only " +  inventory.get(t.getExchangeSKU()).getQuantity() + " available");
+            }
+            else{
+                System.out.println(t.getQuantity() + " units of " + ii.getName() + " requested, only " + ii.getQuantity() + " available");
             }
         }
     }
@@ -49,9 +55,52 @@ public class TransactionController{
         if(t.getTransactionType() == TransactionType.ADJUSTMENT || t.getTransactionType() == TransactionType.RETURN){
             return true;
         }
+        
+        if(t.getTransactionType() == TransactionType.EXCHANGE){
+            InventoryItem exchangeItem = inventory.get(t.getExchangeSKU());
+            if(exchangeItem.getQuantity() - t.getExchangeAmount() < 0){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
         return ii.getQuantity() - t.getQuantity() >= 0; //System.out.println("\nOnly " + ii.getQuantity() + " units of " + ii.getName() + " available, order requested " + getTransaction().getQuantity());
     }
 
+    public void performOrder(Transaction t, InventoryItem ii){
+        ii.setQuantity(ii.getQuantity() - t.getQuantity());
+        double price = (double)t.getPrice()*t.getQuantity();
+        totalSales+= price;
+        totalSalesUnits += t.getQuantity();
+        System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price/100);
+    }
+    
+    public void performReturn(Transaction t, InventoryItem ii){
+        ii.setQuantity(ii.getQuantity() + t.getQuantity());
+        double price = (double)t.getPrice()*t.getQuantity();
+        totalReturns += price;
+        totalReturnUnits += t.getQuantity();
+        System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price/100);
+    }
+    
+    public void performExchange(Transaction t, InventoryItem ii){
+        ii.setQuantity(ii.getQuantity() + t.getQuantity());
+        InventoryItem exchangeItem = inventory.get(t.getExchangeSKU());
+        exchangeItem.setQuantity(exchangeItem.getQuantity() - t.getExchangeAmount());
+        System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
+    }
+    
+    public void performAdjustment(Transaction t, InventoryItem ii){
+        ii.setCost(t.getCost());
+        ii.setDescription(t.getDescription());
+        ii.setName(t.getName());
+        ii.setPrice(t.getPrice());
+        ii.setQuantity(t.getQuantity());
+        System.out.println("\nAn adjustment was made to " + ii.getName());
+    }
+    
+    
     public void displayInventory(){
         System.out.println("\nItemID\tName\tPrice\tQuantity\tDescription");
         
@@ -61,8 +110,11 @@ public class TransactionController{
     }
     
     public void displayTotals(){
-        System.out.println("\nTotal Units Sold: \t" + totalSalesUnits);
+        System.out.println("\n-----------------------\n\tTOTALS\n-----------------------");
+        System.out.println("\nSales\n----------------\nTotal Units Sold: \t" + totalSalesUnits);
         System.out.println("Total Sales: \t\t" + (double)totalSales/100);
+        System.out.println("\nReturns\n----------------\nTotal Units Returned: \t" + totalReturnUnits);
+        System.out.println("Total Returns: \t\t" + (double)totalReturns/100);
     }
     
     public void setCustomer(Customer customer){

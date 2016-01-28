@@ -14,7 +14,7 @@ public class OrderProcessing {
         ArrayList<Customer> customers = createCustomerList();
         TransactionController tc = new TransactionController(inventory);
         
-        int iterations = 15;
+        int iterations = 50;
         
         for(int i = 0; i < iterations; i++){
             Random rand = new Random();
@@ -30,14 +30,21 @@ public class OrderProcessing {
             
             tc.setCustomer(customers.get(customer));
             System.out.println("--------------------------------------------------------------");
-            
-            if(k <= 5){   
+                   
+            if(k <= 8){   
                 tc.displayInventory();
                 tc.performTransaction(new Order(i, customer, item, quantity, price, TransactionType.ORDER));
             }
             else{
                 tc.displayInventory();
                 tc.performTransaction(new Return(i, quantity, customer, item, price, TransactionType.RETURN));
+            }
+            
+            if(i == iterations-2){
+                tc.displayInventory();
+                System.out.println("--------------------------------------------------------------");
+                tc.displayInventory();
+                tc.performTransaction(new Exchange(i, 2, 2, 2, 3, 222, 222, 2, TransactionType.EXCHANGE));
             }
             
             if(i == iterations-1){
@@ -48,6 +55,7 @@ public class OrderProcessing {
             }
             tc.displayInventory();
         }
+        tc.displayTotals();
     }
     
     public static Inventory createInventory(){

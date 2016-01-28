@@ -64,4 +64,14 @@ public class Adjustment extends Transaction{
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    int getExchangeSKU() {
+        return 0;
+    }
+
+    @Override
+    int getExchangeAmount() {
+        return 0;
+    }
 }
