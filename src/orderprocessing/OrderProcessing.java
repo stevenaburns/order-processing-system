@@ -2,6 +2,9 @@ package orderprocessing;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -9,12 +12,12 @@ import java.util.Random;
  */
 public class OrderProcessing {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException{
         Inventory inventory = createInventory();
         ArrayList<Customer> customers = createCustomerList();
-        TransactionController tc = new TransactionController(inventory);
+        TransactionController tc = new TransactionController(inventory, null);
         
-        int iterations = 50;
+        int iterations = 100;
         
         for(int i = 0; i < iterations; i++){
             Random rand = new Random();
@@ -25,35 +28,28 @@ public class OrderProcessing {
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
             int quantity = rand3.nextInt(5) + 1;
-            int price = tc.getInventory().get(item).getPrice();
-            int k = rand4.nextInt(10);
+            //int price = tc.getInventory().get(item).getPrice();
+            
+            tc = new TransactionController(inventory, new Order(i, customer, item, quantity, 9999 , TransactionType.ORDER));
             
             tc.setCustomer(customers.get(customer));
-            System.out.println("--------------------------------------------------------------");
+            //System.out.println("--------------------------------------------------------------");
                    
-            if(k <= 8){   
-                tc.displayInventory();
-                tc.performTransaction(new Order(i, customer, item, quantity, price, TransactionType.ORDER));
+            //tc.displayInventory();
+            if(i == 0)
+            {
+                Thread.sleep(2000);
             }
-            else{
-                tc.displayInventory();
-                tc.performTransaction(new Return(i, quantity, customer, item, price, TransactionType.RETURN));
-            }
+            Thread thread = new Thread(tc);
+            thread.start();
+            //try {
+            //    Thread.sleep(2);
+            //} catch (InterruptedException ex) {
+            //    Logger.getLogger(OrderProcessing.class.getName()).log(Level.SEVERE, null, ex);
+           // }
             
-            if(i == iterations-2){
-                tc.displayInventory();
-                System.out.println("--------------------------------------------------------------");
-                tc.displayInventory();
-                tc.performTransaction(new Exchange(i, 2, 2, 2, 3, 222, 222, 2, TransactionType.EXCHANGE));
-            }
-            
-            if(i == iterations-1){
-                tc.displayInventory();
-                System.out.println("--------------------------------------------------------------");
-                tc.displayInventory();
-                tc.performTransaction(new Adjustment(i, item, "New", "New description goes here", 2222, 2222, 100, TransactionType.ADJUSTMENT));
-            }
-            tc.displayInventory();
+            //tc.performTransaction(new Order(i, customer, item, quantity, price, TransactionType.ORDER));
+            //tc.displayInventory();
         }
         tc.displayTotals();
     }

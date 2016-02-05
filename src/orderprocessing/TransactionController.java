@@ -1,21 +1,25 @@
 package orderprocessing;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author sab5964 and tjf5285
  */
-public class TransactionController{
+public class TransactionController implements Runnable{
     private ArrayList<InventoryItem> inventory;
     private Customer customer;
     private int totalSalesUnits;
     private int totalReturnUnits;
     private int totalReturns;
     private int totalSales;
+    private Transaction t;
     
-    public TransactionController(Inventory inventory){
+    public TransactionController(Inventory inventory, Transaction t){
         this.inventory = inventory.getInventory();
+        this.t = t;
     }
     
     public void performTransaction(Transaction t){
@@ -131,5 +135,10 @@ public class TransactionController{
 
     public int getTotalSalesUnits(){
         return totalSalesUnits;
+    }
+
+    @Override
+    public void run() {
+        performTransaction(t);
     }
 }
