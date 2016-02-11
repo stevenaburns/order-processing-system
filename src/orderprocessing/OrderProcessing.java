@@ -2,9 +2,6 @@ package orderprocessing;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -15,9 +12,13 @@ public class OrderProcessing {
     public static void main(String[] args) throws InterruptedException{
         Inventory inventory = createInventory();
         ArrayList<Customer> customers = createCustomerList();
-        TransactionController tc = new TransactionController(inventory, null);
         
-        int iterations = 100;
+        TransactionController tc = new TransactionController(inventory, null);
+        TransactionController tc2 = new TransactionController(inventory, null);
+        
+        int iterations = 50000;
+        
+        tc.displayInventory();
         
         for(int i = 0; i < iterations; i++){
             Random rand = new Random();
@@ -27,41 +28,35 @@ public class OrderProcessing {
             
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
-            int quantity = rand3.nextInt(5) + 1;
-            //int price = tc.getInventory().get(item).getPrice();
+            int item2 = rand4.nextInt(inventory.getInventory().size());
+            int quantity = rand3.nextInt(5) + 2;
+            int price = tc.getInventory().get(item).getPrice();
             
-            tc = new TransactionController(inventory, new Order(i, customer, item, quantity, 9999 , TransactionType.ORDER));
+            tc = new TransactionController(inventory, new Order(i, customer, item, quantity, price, TransactionType.ORDER));
+            tc2 = new TransactionController(inventory, new Exchange(i, quantity, quantity, item, item2, price, price*2, customer, TransactionType.EXCHANGE));
             
             tc.setCustomer(customers.get(customer));
-            //System.out.println("--------------------------------------------------------------");
-                   
-            //tc.displayInventory();
-            if(i == 0)
-            {
-                Thread.sleep(2000);
-            }
-            Thread thread = new Thread(tc);
-            thread.start();
-            //try {
-            //    Thread.sleep(2);
-            //} catch (InterruptedException ex) {
-            //    Logger.getLogger(OrderProcessing.class.getName()).log(Level.SEVERE, null, ex);
-           // }
+            tc2.setCustomer(customers.get(customer));
+
+            Thread orderThread = new Thread(tc);
+            Thread exchangeThread = new Thread(tc2);
             
-            //tc.performTransaction(new Order(i, customer, item, quantity, price, TransactionType.ORDER));
-            //tc.displayInventory();
+            orderThread.start();
+            exchangeThread.start();
         }
-        tc.displayTotals();
+       
+       Thread.sleep(1000);
+       tc.displayInventory();
     }
     
     public static Inventory createInventory(){
         //Sample inventory                           |ID    |Name       |Description                            |Cost   |Price  |Units
-        InventoryItem socks =       new InventoryItem(0,    "Socks",    "Red Harry Potter Griffindor socks",    599,    899,    29);
-        InventoryItem shoes =       new InventoryItem(1,    "Shoes",    "Black Jordan sneakers",                4999,   499,   20);
-        InventoryItem jeans =       new InventoryItem(2,    "Jeans",    "Blue Levi's jeans size 32",            1399,   2499,   15);
-        InventoryItem hat =         new InventoryItem(3,    "Hat",      "Black and grey wool winter hat",       799,    1599,   16);
-        InventoryItem gloves =      new InventoryItem(4,    "Gloves",   "Blue wool winter gloves",              499,    1299,   26);
-        InventoryItem sweatshirt =  new InventoryItem(5,    "Shirt",    "Purple cotton t-shirt",                1999,   3999,   18);
+        InventoryItem socks =       new InventoryItem(0,    "Socks",    "Red Harry Potter Griffindor socks",    599,    899,    20000);
+        InventoryItem shoes =       new InventoryItem(1,    "Shoes",    "Black Jordan sneakers",                4999,   499,    20000);
+        InventoryItem jeans =       new InventoryItem(2,    "Jeans",    "Blue Levi's jeans size 32",            1399,   2499,   20000);
+        InventoryItem hat =         new InventoryItem(3,    "Hat",      "Black and grey wool winter hat",       799,    1599,   20000);
+        InventoryItem gloves =      new InventoryItem(4,    "Gloves",   "Blue wool winter gloves",              499,    1299,   20000);
+        InventoryItem sweatshirt =  new InventoryItem(5,    "Shirt",    "Purple cotton t-shirt",                1999,   3999,   20000);
         //Create an inventory object to store all this information
         Inventory storeInventory = new Inventory();
         //Add the items to the inventory
