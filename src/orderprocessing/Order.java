@@ -7,6 +7,7 @@ package orderprocessing;
 public class Order extends Transaction{
     private int quantity;
     private int userId;
+    private int cost;
     private int price;
     
     public Order(int transactionId, int userId, int SKU, int quantity, int price, TransactionType transactionType){

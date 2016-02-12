@@ -12,6 +12,7 @@ import java.util.logging.Logger;
  */
 public class TransactionController implements Runnable{
     private final ArrayList<InventoryItem> inventory;
+    private AccountLedger ledger;
     private Customer customer;
     private int totalSalesUnits;
     private int totalReturnUnits;
@@ -19,8 +20,9 @@ public class TransactionController implements Runnable{
     private int totalSales;
     private final Transaction t;
     
-    public TransactionController(Inventory inventory, Transaction t){
+    public TransactionController(Inventory inventory, AccountLedger ledger, Transaction t){
         this.inventory = inventory.getInventory();
+        this.ledger = ledger;
         this.t = t;
     }
     
@@ -81,19 +83,20 @@ public class TransactionController implements Runnable{
         synchronized(ii){
             ii.setQuantity(ii.getQuantity() - t.getQuantity());
             double price = (double)t.getPrice()*t.getQuantity();
-            totalSales+= price;
-            totalSalesUnits += t.getQuantity();
+            ledger.setTotalSalesPrice(ledger.getTotalSalesPrice()+ t.getPrice()*t.getQuantity());
+            ledger.setTotalSalesUnits(ledger.getTotalSalesUnits()+ t.getQuantity());
+            //totalSalesUnits += t.getQuantity();
             System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price/100);
         }
     }
     
     public void performReturn(Transaction t, InventoryItem ii){
         synchronized(ii){
-        ii.setQuantity(ii.getQuantity() + t.getQuantity());
-        double price = (double)t.getPrice()*t.getQuantity();
-        totalReturns += price;
-        totalReturnUnits += t.getQuantity();
-        System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price/100);
+            ii.setQuantity(ii.getQuantity() + t.getQuantity());
+            double price = (double)t.getPrice()*t.getQuantity();
+            ledger.setTotalReturnPrice(ledger.getTotalReturnPrice()+ t.getPrice()*t.getQuantity());
+            ledger.setTotalReturnUnits(ledger.getTotalReturnUnits()+ t.getQuantity());
+            System.out.println("\n" + t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price/100);
         }
     }
     
@@ -146,10 +149,12 @@ public class TransactionController implements Runnable{
     
     public void displayTotals(){
         System.out.println("\n-----------------------\n\tTOTALS\n-----------------------");
-        System.out.println("\nSales\n----------------\nTotal Units Sold: \t" + totalSalesUnits);
-        System.out.println("Total Sales: \t\t" + (double)totalSales/100);
-        System.out.println("\nReturns\n----------------\nTotal Units Returned: \t" + totalReturnUnits);
-        System.out.println("Total Returns: \t\t" + (double)totalReturns/100);
+        System.out.println("\nSales\n----------------\nTotal Units Sold: \t\t" + ledger.getTotalSalesUnits());
+        System.out.println("Total Sales($): \t\t" + (double)ledger.getTotalSalesPrice()/100);
+        
+        System.out.println("\nReturns\n----------------\nTotal Units Returned: \t\t" + ledger.getTotalReturnUnits());
+        System.out.println("Total Returns($): \t\t" + (double)ledger.getTotalReturnPrice()/100);
+
     }
     
     public synchronized void setCustomer(Customer customer){
