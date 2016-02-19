@@ -8,9 +8,9 @@ import java.util.ArrayList;
  */
 public class Inventory 
 {
-    private ArrayList inventory = new ArrayList();
+    private ArrayList<InventoryItem> inventory = new ArrayList();
 
-    public ArrayList getInventory() {
+    public ArrayList<InventoryItem> getInventory() {
         return inventory;
     }
     

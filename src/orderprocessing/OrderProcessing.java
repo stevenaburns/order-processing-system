@@ -1,7 +1,11 @@
 package orderprocessing;
 
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -9,54 +13,57 @@ import java.util.Random;
  */
 public class OrderProcessing {
 
-    public static void main(String[] args) throws InterruptedException{
-        Inventory inventory = createInventory();
+    public static void main(String[] args) throws InterruptedException, SQLException {
+        Connection con = null;
+        try {
+            con = getConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(OrderProcessing.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Inventory inventory = getInventory(con, "inventory");
         AccountLedger ledger = new AccountLedger();
         ArrayList<Customer> customers = createCustomerList();
-        
-        TransactionController tc = new TransactionController(inventory, ledger, null);
-        TransactionController tc2, tc3, tc4;
-        
-        int iterations = 500;
-        
-        tc.displayInventory();
-        
-        for(int i = 0; i < iterations; i++){
+
+        TransactionController tc, tc2, tc3, tc4;
+
+        int iterations = 10000;
+
+        for (int i = 0; i < iterations; i++) {
             Random rand = new Random();
             Random rand2 = new Random();
             Random rand3 = new Random();
             Random rand4 = new Random();
-            
+
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
             int item2 = rand4.nextInt(inventory.getInventory().size());
-            int quantity = rand3.nextInt(5) + 2;
-            int price = tc.getInventory().get(item).getPrice();
-            
+            int quantity = rand3.nextInt(5) + 1;
+            int price = inventory.getInventory().get(item).getPrice();
+
             tc = new TransactionController(inventory, ledger, new Order(i, customer, item, quantity, price, TransactionType.ORDER));
-            tc2 = new TransactionController(inventory, ledger,  new Exchange(i, quantity, quantity, item, item2, price, price*2, customer, TransactionType.EXCHANGE));
-            tc3 = new TransactionController(inventory, ledger,  new Return(i, quantity+1, customer, item, price, TransactionType.RETURN));
-            tc4 = new TransactionController(inventory, ledger, new Adjustment(i, 2, "Jeans", "testing adjustment", 2599, 3999, 100, TransactionType.ADJUSTMENT));
-            
+            tc2 = new TransactionController(inventory, ledger, new Exchange(i, quantity, quantity, item, item2, price, price * 2, customer, TransactionType.EXCHANGE));
+            tc3 = new TransactionController(inventory, ledger, new Return(i, quantity, customer, item2, price, TransactionType.RETURN));
+            //tc4 = new TransactionController(inventory, ledger, new Adjustment(i, 2, "Jeans", "testing adjustment", 2599, 3999, 100, TransactionType.ADJUSTMENT));
+
             tc.setCustomer(customers.get(customer));
             tc2.setCustomer(customers.get(customer));
             tc3.setCustomer(customers.get(customer));
-            tc4.setCustomer(customers.get(customer));
+            //tc4.setCustomer(customers.get(customer));
+            //tc.threadNum;
 
             Thread orderThread = new Thread(tc);
             Thread exchangeThread = new Thread(tc2);
             Thread returnThread = new Thread(tc3);
-            Thread adjustmentThread = new Thread(tc4);
-            
+            //Thread adjustmentThread = new Thread(tc4);
+
             orderThread.start();
             exchangeThread.start();
             returnThread.start();
             //adjustmentThread.start();
         }
-       
-       Thread.sleep(1000);
-       tc.displayInventory();
-       tc.displayTotals();
+        //tc.displayInventory();
+        //tc.displayTotals();
     }
     
     public static Inventory createInventory(){
@@ -95,4 +102,50 @@ public class OrderProcessing {
         //Return the customer list
         return customerList;
     }
+    
+    public static Connection getConnection() throws SQLException {
+        Connection conn = null;
+
+        Properties connectionProps = new Properties();
+        connectionProps.put("user", "root");
+        connectionProps.put("password", "");
+
+        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/order_processing",connectionProps);
+
+        System.out.println("Connected to database");
+        return conn;
+    }
+    
+    public static Inventory getInventory(Connection con, String dbName) throws SQLException {
+
+    Inventory storeInventory = new Inventory();
+    Statement stmt = null;
+    String query = "select INVENTORYID, NAME, DESCRIPTION, PRICE, COST, UNITS from " + dbName;
+    try {
+        stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        System.out.println("\nID\tName\tUnits\tCost\tPrice\tDescription");
+        while (rs.next()) {
+            String name = rs.getString("NAME");
+            String description = rs.getString("DESCRIPTION");
+            int price = rs.getInt("PRICE");
+            int cost = rs.getInt("COST");
+            int units = rs.getInt("UNITS");
+            int inventoryId = rs.getInt("INVENTORYID");
+
+            System.out.println(inventoryId + "\t" + name + "\t" + units + "\t" + cost + "\t" + price + "\t" + description);
+            //Add the items to the inventory
+            InventoryItem dbItem = new InventoryItem(inventoryId, name, description, cost, price, units);
+            storeInventory.AddInventoryItem(dbItem);
+        }
+    } catch (SQLException e ) {
+        System.out.println(e);
+        //JDBCTutorialUtilities.printSQLException(e);
+    } finally {
+        if (stmt != null) { stmt.close(); }
+    }
+    //con.close();
+    System.out.println("\n");
+    return storeInventory;
+}
 }
