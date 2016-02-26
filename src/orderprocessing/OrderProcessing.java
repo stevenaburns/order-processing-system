@@ -1,7 +1,10 @@
 package orderprocessing;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
@@ -34,6 +37,12 @@ public class OrderProcessing {
             Random rand2 = new Random();
             Random rand3 = new Random();
             Random rand4 = new Random();
+            Random time = new Random();
+            Random tranType = new Random();
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Calendar cal = Calendar.getInstance();
+            String timeStamp = dateFormat.format(cal.getTime());
 
             int customer = rand.nextInt(customers.size());
             int item = rand2.nextInt(inventory.getInventory().size());
@@ -43,24 +52,35 @@ public class OrderProcessing {
 
             tc = new TransactionController(inventory, ledger, new Order(i, customer, item, quantity, price, TransactionType.ORDER));
             tc2 = new TransactionController(inventory, ledger, new Exchange(i, quantity, quantity, item, item2, price, price * 2, customer, TransactionType.EXCHANGE));
-            tc3 = new TransactionController(inventory, ledger, new Return(i, quantity, customer, item2, price, TransactionType.RETURN));
-            //tc4 = new TransactionController(inventory, ledger, new Adjustment(i, 2, "Jeans", "testing adjustment", 2599, 3999, 100, TransactionType.ADJUSTMENT));
+            tc3 = new TransactionController(inventory, ledger, new Return(i, quantity, customer, item, price, TransactionType.RETURN));
+            tc4 = new TransactionController(inventory, ledger, new Adjustment(i, 2, "Jeans", timeStamp, 2599, 3999, 1000, TransactionType.ADJUSTMENT));
 
             tc.setCustomer(customers.get(customer));
             tc2.setCustomer(customers.get(customer));
             tc3.setCustomer(customers.get(customer));
-            //tc4.setCustomer(customers.get(customer));
+            tc4.setCustomer(customers.get(customer));
             //tc.threadNum;
 
             Thread orderThread = new Thread(tc);
             Thread exchangeThread = new Thread(tc2);
             Thread returnThread = new Thread(tc3);
-            //Thread adjustmentThread = new Thread(tc4);
+            Thread adjustmentThread = new Thread(tc4);
 
-            orderThread.start();
-            exchangeThread.start();
-            returnThread.start();
-            //adjustmentThread.start();
+            Thread.sleep(time.nextInt(25));
+            
+           int tran = tranType.nextInt(10);
+            if(tran <= 6){
+                orderThread.start();
+            }
+            if(tran == 7){
+                returnThread.start();
+            }
+            if(tran == 8){
+                exchangeThread.start();
+            }
+            if(tran == 9){
+                adjustmentThread.start();
+            }
         }
         //tc.displayInventory();
         //tc.displayTotals();

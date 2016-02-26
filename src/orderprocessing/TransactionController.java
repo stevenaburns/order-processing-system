@@ -170,20 +170,32 @@ public class TransactionController implements Runnable {
                     stmt = c.createStatement();
                     stmt.executeUpdate(query);
                     System.out.println(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
+                    c.close();
                 }
             }
+            
             System.out.println("Connection closed\n");
         }
     }
 
-    public void performAdjustment(Transaction t, InventoryItem ii) {
+    public void performAdjustment(Transaction t, InventoryItem ii) throws SQLException {
         synchronized (ii) {
-            ii.setCost(t.getCost());
-            ii.setDescription(t.getDescription());
-            ii.setName(t.getName());
-            ii.setPrice(t.getPrice());
-            ii.setQuantity(t.getQuantity());
-            System.out.println("\nAn adjustment was made to " + ii.getName());
+            
+            try (Connection c = getConnection()) {
+                ii.setCost(t.getCost());
+                ii.setDescription(t.getDescription());
+                ii.setName(t.getName());
+                ii.setPrice(t.getPrice());
+                ii.setQuantity(t.getQuantity());
+                Statement stmt;
+                String query = "UPDATE inventory SET units = " + ii.getQuantity() + ", cost = " + ii.getCost() + ", price = " + ii.getPrice() + ", name = '" + ii.getName() + "', description = '" + ii.getDescription() + "'WHERE NAME ='" + ii.getName() + "';";
+                System.out.println(query);
+                stmt = c.createStatement();
+                stmt.executeUpdate(query);
+                System.out.println("\nAn adjustment was made to " + ii.getName());
+                c.close();
+                System.out.println("Connection closed\n");
+            }
         }
     }
 
