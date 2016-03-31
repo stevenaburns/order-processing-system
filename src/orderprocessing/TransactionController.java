@@ -24,6 +24,7 @@ public class TransactionController implements Runnable {
     private int totalReturns;
     private int totalSales;
     private final Transaction t;
+    private String receipt;
     int threadNum;
 
     public TransactionController(Inventory inventory, AccountLedger ledger, Transaction t) {
@@ -56,11 +57,13 @@ public class TransactionController implements Runnable {
                 }
             } else {
                 //c.close();
+                //setReceiptInfo("\nInsufficient inventory to complete " + t.getTransactionType());
                 System.out.println("\nInsufficient inventory to complete " + t.getTransactionType());
                 //System.out.println("Connection closed");
                 if (t.getTransactionType() == TransactionType.EXCHANGE) {
                     System.out.println("Exchange for " + t.getExchangeAmount() + " items of " + inventory.get(t.getExchangeSKU()).getName() + " failed, only " + inventory.get(t.getExchangeSKU()).getQuantity() + " available");
                 } else {
+                    setReceiptInfo("Transaction failed: " + t.getQuantity() + " units of " + ii.getName() + " requested, only " + ii.getQuantity() + " available");
                     System.out.println(t.getQuantity() + " units of " + ii.getName() + " requested, only " + ii.getQuantity() + " available");
                 }
             }
@@ -100,6 +103,7 @@ public class TransactionController implements Runnable {
             }
             System.out.println("Connection Closed");
             double price = (double) t.getPrice() * t.getQuantity();
+            setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price / 100 + "\n");
             System.out.println(t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price / 100 + "\n");
         }
 
@@ -124,6 +128,7 @@ public class TransactionController implements Runnable {
                 c.close();
             }
             System.out.println("Connection closed");
+            setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price / 100 + "\n");
             System.out.println(t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price / 100 + "\n");
         }
 
@@ -205,6 +210,16 @@ public class TransactionController implements Runnable {
         for (InventoryItem i : inventory) {
             System.out.println(i.getSKU() + "\t" + i.getName() + "\t" + (double) i.getPrice() / 100 + "\t" + i.getQuantity() + "\t\t" + i.getDescription());
         }
+    }
+    
+    public String getReceiptInfo()
+    {
+        return receipt;
+    }
+    
+    public void setReceiptInfo(String receipt){
+        System.out.println("INSIDE SETRECEIPTINFO");
+        this.receipt = receipt;
     }
 
     public void displayTotals() {

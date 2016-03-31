@@ -1,5 +1,11 @@
 package orderprocessing;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class OrderProcessing {
 
-    public static void main(String[] args) throws InterruptedException, SQLException {
+    public static void main(String[] args) throws InterruptedException, SQLException, IOException, SocketException {
         Connection con = null;
         try {
             con = getConnection();
@@ -27,63 +33,21 @@ public class OrderProcessing {
         Inventory inventory = getInventory(con, "inventory");
         AccountLedger ledger = new AccountLedger();
         ArrayList<Customer> customers = createCustomerList();
+        
+        TransactionController tc;
+        ServerSocket serverSocket = new ServerSocket(9999);
+        System.out.println("Socket open on port 9999...");
 
-        TransactionController tc, tc2, tc3, tc4;
-
-        int iterations = 10000;
-
-        for (int i = 0; i < iterations; i++) {
-            Random rand = new Random();
-            Random rand2 = new Random();
-            Random rand3 = new Random();
-            Random rand4 = new Random();
-            Random time = new Random();
-            Random tranType = new Random();
-
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Calendar cal = Calendar.getInstance();
-            String timeStamp = dateFormat.format(cal.getTime());
-
-            int customer = rand.nextInt(customers.size());
-            int item = rand2.nextInt(inventory.getInventory().size());
-            int item2 = rand4.nextInt(inventory.getInventory().size());
-            int quantity = rand3.nextInt(5) + 1;
-            int price = inventory.getInventory().get(item).getPrice();
-
-            tc = new TransactionController(inventory, ledger, new Order(i, customer, item, quantity, price, TransactionType.ORDER));
-            tc2 = new TransactionController(inventory, ledger, new Exchange(i, quantity, quantity, item, item2, price, price * 2, customer, TransactionType.EXCHANGE));
-            tc3 = new TransactionController(inventory, ledger, new Return(i, quantity, customer, item, price, TransactionType.RETURN));
-            tc4 = new TransactionController(inventory, ledger, new Adjustment(i, 2, "Jeans", timeStamp, 2599, 3999, 1000, TransactionType.ADJUSTMENT));
-
-            tc.setCustomer(customers.get(customer));
-            tc2.setCustomer(customers.get(customer));
-            tc3.setCustomer(customers.get(customer));
-            tc4.setCustomer(customers.get(customer));
-            //tc.threadNum;
-
-            Thread orderThread = new Thread(tc);
-            Thread exchangeThread = new Thread(tc2);
-            Thread returnThread = new Thread(tc3);
-            Thread adjustmentThread = new Thread(tc4);
-
-            Thread.sleep(time.nextInt(25));
+        //Listen for clients
+        while (true) {
+            //Accept any client requests and add them to the list
+            Socket socket = serverSocket.accept();
             
-           int tran = tranType.nextInt(10);
-            if(tran <= 6){
-                orderThread.start();
-            }
-            if(tran == 7){
-                returnThread.start();
-            }
-            if(tran == 8){
-                exchangeThread.start();
-            }
-            if(tran == 9){
-                adjustmentThread.start();
-            }
+            //Create new ServerListener instance to keep track of client
+            ServerListener sl = new ServerListener(socket, inventory, ledger);
+            sl.start();
+            System.out.println("New client connected");
         }
-        //tc.displayInventory();
-        //tc.displayTotals();
     }
     
     public static Inventory createInventory(){
