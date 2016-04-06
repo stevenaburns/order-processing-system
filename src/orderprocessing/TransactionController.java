@@ -175,6 +175,7 @@ public class TransactionController implements Runnable {
                     stmt = c.createStatement();
                     stmt.executeUpdate(query);
                     System.out.println(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
+                    setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
                     c.close();
                 }
             }

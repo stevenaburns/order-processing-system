@@ -42,27 +42,35 @@ public class ServerListener extends Thread {
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clientInput = input.readLine();
                 orderData = clientInput.split(",");
-                int transactionTypeNum = Integer.parseInt(orderData[5].trim());
+                
+                int transactionTypeNum = Integer.parseInt(orderData[orderData.length-1].trim());
                 TransactionType t = null;
                 
                 System.out.println("TRANSACTION #" + transactionTypeNum);
+                System.out.println(transactionTypeNum + " :TTN");
                 switch (transactionTypeNum) {
                     case 1:
                         t = TransactionType.ORDER;
+                        tc = new TransactionController(inventory, ledger, new Order(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), t));
                         break;
                     case 2:
                         t = TransactionType.RETURN;
+                        //Order(int transactionId, int userId, int SKU, int quantity, int price, TransactionType transactionType)
+                        //Return(int transactionId, int quantity, int userId, int SKU, int price, TransactionType transactionType) {
+                        tc = new TransactionController(inventory, ledger, new Return(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), t));
                         break;
                     case 3:
                         t = TransactionType.EXCHANGE;
+                        //public Exchange(int transactionId, int quantity, int exchangeQuantity, int exchangeSKU, int SKU, int price, int exchangePrice, int userId, TransactionType transactionType)
+                        System.out.println("In server case 3");
+                        tc = new TransactionController(inventory, ledger, new Exchange(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), Integer.parseInt(orderData[5].trim()), Integer.parseInt(orderData[6].trim()), Integer.parseInt(orderData[7].trim()), t));
                         break;
                     case 4:
                         t = TransactionType.ADJUSTMENT;
+                        tc = new TransactionController(inventory, ledger, new Order(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), t));
                         break;
                 }
-
-                
-                tc = new TransactionController(inventory, ledger, new Order(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), t));
+               
                 tc.setCustomer(c);
                 Thread transactionThread = new Thread(tc);
                 transactionThread.start();
