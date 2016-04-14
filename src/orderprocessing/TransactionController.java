@@ -199,6 +199,7 @@ public class TransactionController implements Runnable {
                 stmt = c.createStatement();
                 stmt.executeUpdate(query);
                 System.out.println("\nAn adjustment was made to " + ii.getName());
+                setReceiptInfo("An adjustment was made to " + ii.getName());
                 c.close();
                 System.out.println("Connection closed\n");
             }
@@ -219,7 +220,8 @@ public class TransactionController implements Runnable {
     }
     
     public void setReceiptInfo(String receipt){
-        System.out.println("INSIDE SETRECEIPTINFO");
+        //System.out.println("INSIDE SETRECEIPTINFO");
+        //System.out.println("RECEIPT: " + receipt);
         this.receipt = receipt;
     }
 

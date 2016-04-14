@@ -41,6 +41,7 @@ public class ServerListener extends Thread {
                 //Read input from the client
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clientInput = input.readLine();
+                System.out.println(clientInput);
                 orderData = clientInput.split(",");
                 
                 int transactionTypeNum = Integer.parseInt(orderData[orderData.length-1].trim());
@@ -62,12 +63,16 @@ public class ServerListener extends Thread {
                     case 3:
                         t = TransactionType.EXCHANGE;
                         //public Exchange(int transactionId, int quantity, int exchangeQuantity, int exchangeSKU, int SKU, int price, int exchangePrice, int userId, TransactionType transactionType)
-                        System.out.println("In server case 3");
                         tc = new TransactionController(inventory, ledger, new Exchange(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), Integer.parseInt(orderData[5].trim()), Integer.parseInt(orderData[6].trim()), Integer.parseInt(orderData[7].trim()), t));
                         break;
                     case 4:
+                        System.out.println("Here we are");
                         t = TransactionType.ADJUSTMENT;
-                        tc = new TransactionController(inventory, ledger, new Order(Integer.parseInt(orderData[0].trim()), Integer.parseInt(orderData[1].trim()), Integer.parseInt(orderData[2].trim()), Integer.parseInt(orderData[3].trim()), Integer.parseInt(orderData[4].trim()), t));
+                        tc = new TransactionController(inventory, ledger, new Adjustment(Integer.parseInt(orderData[0].trim()), 
+                                Integer.parseInt(orderData[1].trim()), orderData[2].trim(), 
+                                orderData[3].trim(), Integer.parseInt(orderData[4].trim()),
+                                Integer.parseInt(orderData[5].trim()),Integer.parseInt(orderData[6].trim()), t));
+                        System.out.println(clientInput);
                         break;
                 }
                
@@ -75,11 +80,10 @@ public class ServerListener extends Thread {
                 Thread transactionThread = new Thread(tc);
                 transactionThread.start();
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                //System.out.println("HERE WE GO: " + tc.getReceiptInfo());
                 PrintStream toClient = new PrintStream(socket.getOutputStream(), true);
                 toClient.println(tc.getReceiptInfo());
                 tc.displayInventory();
