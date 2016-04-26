@@ -35,20 +35,27 @@ public class ServerListener extends Thread {
     }
 
     @Override
-    public void run() {
+    public void run(){
         try {
             while (true) {
                 //Read input from the client
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 clientInput = input.readLine();
-                System.out.println(clientInput);
+                //System.out.println(clientInput);
+                try{
                 orderData = clientInput.split(",");
+                }
+                catch(NullPointerException e)
+                {
+                    System.out.println("Client disconnected");
+                    break;
+                }
                 
                 int transactionTypeNum = Integer.parseInt(orderData[orderData.length-1].trim());
                 TransactionType t = null;
                 
-                System.out.println("TRANSACTION #" + transactionTypeNum);
-                System.out.println(transactionTypeNum + " :TTN");
+                //System.out.println("TRANSACTION #" + transactionTypeNum);
+                //System.out.println(transactionTypeNum + " :TTN");
                 switch (transactionTypeNum) {
                     case 1:
                         t = TransactionType.ORDER;
@@ -88,6 +95,8 @@ public class ServerListener extends Thread {
                 toClient.println(tc.getReceiptInfo());
                 tc.displayInventory();
             }
+        } catch (NullPointerException e) {
+            Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, e);
         } catch (IOException ex) {
             Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
         }

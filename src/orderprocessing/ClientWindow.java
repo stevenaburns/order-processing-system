@@ -1,5 +1,7 @@
 package orderprocessing;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +28,19 @@ public class ClientWindow extends javax.swing.JFrame {
      */
     public ClientWindow() {
         initComponents();
+        
+        this.addWindowListener(new WindowAdapter() {
+           @Override
+           public void windowClosing(WindowEvent b) {
+               try {
+                   socket.close();
+               } catch (IOException ex) {
+                   Logger.getLogger(ClientWindow.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }
 
+       });
+        
         this.setLocationRelativeTo(null);
         this.setTitle("Order Processing System");
         jButton3.setVisible(false);
@@ -407,7 +421,7 @@ public class ClientWindow extends javax.swing.JFrame {
         switch(jComboBox2.getSelectedIndex())
         {
             case 1:
-                outputString = "1,1," + (jComboBox1.getSelectedIndex()) + "," + jTextField2.getText().toString() + "," + prices.get(jComboBox1.getSelectedIndex()).toString() + "," + jComboBox2.getSelectedIndex();
+                outputString = "1,1," + skus.get((jComboBox1.getSelectedIndex())) + "," + jTextField2.getText().toString() + "," + prices.get(jComboBox1.getSelectedIndex()).toString() + "," + jComboBox2.getSelectedIndex();
                 break;
             case 2:
                 //Return(int transactionId, int quantity, int userId, int SKU, int price, TransactionType transactionType) {
@@ -456,7 +470,7 @@ public class ClientWindow extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         jComboBox1.setSelectedIndex(0);
-        refreshData();
+        //refreshData();
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {
@@ -616,14 +630,22 @@ public class ClientWindow extends javax.swing.JFrame {
     
     public void refreshData()
     {
-        for(int i = 0; (i >= 1) && (i <= jComboBox1.getItemCount()); i++)
+        int upperLimit = jComboBox1.getItemCount();
+        System.out.println("Upper Limit: " + upperLimit);
+        
+        for(int i = 1; i <= upperLimit ; i++)
         {
+            System.out.println("In refreshdata");
+            System.out.println(jComboBox1.getItemCount());
             jComboBox1.remove(i);
+            //i = i-1;
         }
         
-        for(int i = 0; (i >= 1) && (i <= jComboBox3.getItemCount()); i++)
+        for(int j = 1; j <= upperLimit; j++)
         {
-            jComboBox3.remove(i);
+            System.out.println("In refreshdata2");
+            System.out.println(jComboBox1.getItemCount());
+            jComboBox3.removeItemAt(j);
         }
         
         names.clear();

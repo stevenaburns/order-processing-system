@@ -95,16 +95,24 @@ public class TransactionController implements Runnable {
 
             try (Connection c = getConnection()) {
                 Statement stmt;
-                String query = "UPDATE inventory SET units = " + quan + " WHERE NAME ='" + ii.getName() + "';";
+                String query = "UPDATE inventory SET units = " + quan + " WHERE InventoryID ='" + ii.getSKU() + "';";
                 System.out.println(query);
                 stmt = c.createStatement();
                 stmt.executeUpdate(query);
+                
+                double price = (double) t.getPrice() * t.getQuantity();
+                setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were sold to for " + price / 100 + "\n");
+                System.out.println(t.getQuantity() + " units of " + ii.getName() + " were sold to for " + price / 100 + "\n");
+                
+                String query2 = "INSERT INTO transactions (description) VALUES('" + getReceiptInfo() + "')";
+                System.out.println(query2);
+                Statement stmt2 = c.createStatement();
+                stmt2.executeUpdate(query2);
+                
                 c.close();
             }
             System.out.println("Connection Closed");
-            double price = (double) t.getPrice() * t.getQuantity();
-            setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price / 100 + "\n");
-            System.out.println(t.getQuantity() + " units of " + ii.getName() + " were sold to " + customer.getFirstName() + " for " + price / 100 + "\n");
+            
         }
 
         synchronized (ledger) {
@@ -125,11 +133,18 @@ public class TransactionController implements Runnable {
                 System.out.println(query);
                 stmt = c.createStatement();
                 stmt.executeUpdate(query);
+                
+                setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were returned for " + price / 100 + "\n");
+                System.out.println(t.getQuantity() + " units of " + ii.getName() + " were returned for " + price / 100 + "\n");
+                
+                String query2 = "INSERT INTO transactions (description) VALUES('" + getReceiptInfo() + "')";
+                System.out.println(query2);
+                Statement stmt2 = c.createStatement();
+                stmt2.executeUpdate(query2);
+                
                 c.close();
             }
             System.out.println("Connection closed");
-            setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price / 100 + "\n");
-            System.out.println(t.getQuantity() + " units of " + ii.getName() + " were returned by " + customer.getFirstName() + " for " + price / 100 + "\n");
         }
 
         synchronized (ledger) {
@@ -174,8 +189,14 @@ public class TransactionController implements Runnable {
                     System.out.println(query);
                     stmt = c.createStatement();
                     stmt.executeUpdate(query);
-                    System.out.println(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
-                    setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName() + " by " + customer.getFirstName());
+                    System.out.println(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName()) ;
+                    setReceiptInfo(t.getQuantity() + " units of " + ii.getName() + " were exchanged for " + t.getExchangeAmount() + " units of " + exchangeItem.getName());
+                    
+                    String query2 = "INSERT INTO transactions (description) VALUES('" + getReceiptInfo() + "')";
+                    System.out.println(query2);
+                    Statement stmt2 = c.createStatement();
+                    stmt2.executeUpdate(query2);
+                    
                     c.close();
                 }
             }
@@ -194,23 +215,29 @@ public class TransactionController implements Runnable {
                 ii.setPrice(t.getPrice());
                 ii.setQuantity(t.getQuantity());
                 Statement stmt;
-                String query = "UPDATE inventory SET units = " + ii.getQuantity() + ", cost = " + ii.getCost() + ", price = " + ii.getPrice() + ", name = '" + ii.getName() + "', description = '" + ii.getDescription() + "'WHERE NAME ='" + ii.getName() + "';";
+                String query = "UPDATE inventory SET units = " + ii.getQuantity() + ", cost = " + ii.getCost() + ", price = " + ii.getPrice() + ", name = '" + ii.getName() + "', description = '" + ii.getDescription() + "'WHERE InventoryID ='" + ii.getSKU() + "';";
                 System.out.println(query);
                 stmt = c.createStatement();
                 stmt.executeUpdate(query);
                 System.out.println("\nAn adjustment was made to " + ii.getName());
                 setReceiptInfo("An adjustment was made to " + ii.getName());
-                c.close();
-                System.out.println("Connection closed\n");
+                
+                String query2 = "INSERT INTO transactions (description) VALUES('" + getReceiptInfo() + "')";
+                System.out.println(query2);
+                Statement stmt2 = c.createStatement();
+                stmt2.executeUpdate(query2);
+                
+                c.close(); 
             }
+            System.out.println("Connection closed\n");
         }
     }
 
     public void displayInventory() {
-        System.out.println("\nItemID\tName\tPrice\tQuantity\tDescription");
+        System.out.println("\nItemID\tName\t\tPrice\tQuantity\tDescription");
 
         for (InventoryItem i : inventory) {
-            System.out.println(i.getSKU() + "\t" + i.getName() + "\t" + (double) i.getPrice() / 100 + "\t" + i.getQuantity() + "\t\t" + i.getDescription());
+            System.out.println(i.getSKU() + "\t" + i.getName() + "\t\t" + (double) i.getPrice() / 100 + "\t" + i.getQuantity() + "\t\t" + i.getDescription());
         }
     }
     

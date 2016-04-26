@@ -108,7 +108,7 @@ public class OrderProcessing {
     try {
         stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(query);
-        System.out.println("\nID\tName\tUnits\tCost\tPrice\tDescription");
+        System.out.println("\nItemID\tName\t\tPrice\tQuantity\tDescription");
         while (rs.next()) {
             String name = rs.getString("NAME");
             String description = rs.getString("DESCRIPTION");
@@ -117,7 +117,7 @@ public class OrderProcessing {
             int units = rs.getInt("UNITS");
             int inventoryId = rs.getInt("INVENTORYID");
 
-            System.out.println(inventoryId + "\t" + name + "\t" + units + "\t" + cost + "\t" + price + "\t" + description);
+            System.out.println(inventoryId + "\t" + name + "\t\t" + price + "\t" + units + "\t\t" + description);
             //Add the items to the inventory
             InventoryItem dbItem = new InventoryItem(inventoryId, name, description, cost, price, units);
             storeInventory.AddInventoryItem(dbItem);
